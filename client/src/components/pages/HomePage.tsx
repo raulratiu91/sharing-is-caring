@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
+import { Footer } from "../ui/footer";
 import { Navigation } from "../navigation/Navigation";
 import {
   Heart,
@@ -14,6 +16,7 @@ import {
   ArrowRight,
   Calendar,
 } from "lucide-react";
+import iCareLogo from "../../assets/iCareLogo.png";
 
 export const HomePage: React.FC = () => {
   return (
@@ -30,9 +33,11 @@ export const HomePage: React.FC = () => {
 
           <div className="relative text-center">
             <div className="flex justify-center mb-8">
-              <div className="p-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg">
-                <HandHeart className="h-20 w-20 text-white" />
-              </div>
+              <img
+                src={iCareLogo}
+                alt="iCare Logo"
+                className="h-64 w-64 object-contain"
+              />
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Join Our Community of
@@ -57,13 +62,15 @@ export const HomePage: React.FC = () => {
                 I Need Help
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button
-                size="lg"
-                className="min-w-[200px] bg-gray-200 hover:bg-gray-300 text-black hover:text-black dark:bg-gray-600 dark:text-black dark:hover:bg-gray-500 dark:hover:text-black shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                I Want to Help
-                <Heart className="ml-2 h-5 w-5" />
-              </Button>
+              <Link to="/volunteerDashboard">
+                <Button
+                  size="lg"
+                  className="min-w-[200px] bg-gray-200 hover:bg-gray-300 text-black hover:text-black dark:bg-gray-600 dark:text-black dark:hover:bg-gray-500 dark:hover:text-black shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  I Want to Help
+                  <Heart className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -492,18 +499,7 @@ export const HomePage: React.FC = () => {
         </Card>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted/50 mt-16">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Heart className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-foreground">iCare</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Building stronger communities through mutual support and care.
-          </p>
-        </div>
-      </footer>
+      <Footer text="Building stronger communities through mutual support and care." />
     </div>
   );
 };
