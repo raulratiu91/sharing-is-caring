@@ -28,33 +28,64 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       address: "123 Main Street, Anytown, State 12345",
       bio: "I love helping my community and staying connected with technology.",
       userType: "elder",
-      preferences: {
-        emailNotifications: true,
-        smsNotifications: false,
-        pushNotifications: true,
-        language: "en",
-        availabilityRadius: 10,
-      },
     }
   );
+
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Load profile picture from localStorage on component mount
+  React.useEffect(() => {
+    const savedProfilePicture = localStorage.getItem(
+      `profilePicture_${profileData.id}`
+    );
+    if (savedProfilePicture) {
+      setProfilePicture(savedProfilePicture);
+    }
+  }, [profileData.id]);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageDataUrl = e.target?.result as string;
+        setProfilePicture(imageDataUrl);
+        // Save to localStorage immediately
+        localStorage.setItem(`profilePicture_${profileData.id}`, imageDataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCameraClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleRemoveProfilePicture = () => {
+    setProfilePicture(null);
+    localStorage.removeItem(`profilePicture_${profileData.id}`);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleInputChange = (field: keyof User, value: string) => {
     setProfileData((prev) => ({
       ...prev,
       [field]: value,
-    }));
-  };
-
-  const handlePreferenceChange = (
-    field: keyof User["preferences"],
-    value: string | number | boolean
-  ) => {
-    setProfileData((prev) => ({
-      ...prev,
-      preferences: {
-        ...prev.preferences,
-        [field]: value,
-      },
     }));
   };
 
@@ -89,19 +120,39 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
           {/* Profile Picture */}
           <div className="flex items-center gap-6 mb-6">
             <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-2xl font-bold">
-                {profileData.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+                {profilePicture ? (
+                  <img
+                    src={profilePicture}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  profileData.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                )}
               </div>
               <Button
                 size="icon"
                 variant="outline"
-                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full"
+                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                onClick={handleCameraClick}
+                title="Change profile picture"
               >
-                <Camera className="h-4 w-4" />
+                <Camera className="h-4 w-4 text-gray-700 dark:text-gray-300" />
               </Button>
+              {profilePicture && (
+                <Button
+                  size="icon"
+                  className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-white hover:bg-gray-100 text-black shadow-xl border-2 border-gray-300 z-20 flex items-center justify-center"
+                  onClick={handleRemoveProfilePicture}
+                  title="Remove profile picture"
+                >
+                  <span className="text-lg font-black leading-none">×</span>
+                </Button>
+              )}
             </div>
             <div>
               <h3 className="font-medium text-foreground">
@@ -111,6 +162,14 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                 {profileData.userType}
               </p>
             </div>
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -195,6 +254,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
             variant="outline"
             size="lg"
             className="min-w-[200px] border-blue-601 text-black dark:border-blue-400 hover:text-black"
+            onClick={handleSave}
           >
             <Save className="h-4 w-4 mr-2" />
             Save Changes
