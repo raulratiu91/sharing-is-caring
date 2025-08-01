@@ -1,12 +1,21 @@
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { HomePage } from "./components/pages/HomePage";
+import { ProfileSettings } from "./components/profile/ProfileSettings";
 
 function App() {
   return (
-    <>
-      <div>
-        <h1>Sharing is caring project</h1>
-      </div>
-    </>
+    <ThemeProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/profile" element={<ProfileSettings />} />
+          </Routes>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
