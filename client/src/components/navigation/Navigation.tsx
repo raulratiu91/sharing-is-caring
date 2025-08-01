@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useTheme } from "../../hooks/useTheme";
-import { Heart, Settings, Sun, Moon, Home } from "lucide-react";
+import { Heart, Settings, Sun, Moon, Home, User } from "lucide-react";
 
 export const Navigation: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -34,7 +34,29 @@ export const Navigation: React.FC = () => {
             )}
           </Button>
 
-          {location.pathname === "/profile" ? (
+          {location.pathname === "/volunteerProfile" ? (
+            <Link to="/volunteerDashboard">
+              <Button
+                variant="outline"
+                size="lg"
+                className="min-w-[200px] border-blue-600 text-black dark:border-blue-400 hover:text-black"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+          ) : location.pathname === "/volunteerDashboard" ? (
+            <Link to="/volunteerProfile">
+              <Button
+                variant="outline"
+                size="lg"
+                className="min-w-[200px] border-blue-600 text-black dark:border-blue-400 hover:text-black"
+              >
+                <User className="h-4 w-4 mr-2" />
+                My Profile
+              </Button>
+            </Link>
+          ) : location.pathname === "/profile" ? (
             <Link to="/">
               <Button
                 variant="outline"
