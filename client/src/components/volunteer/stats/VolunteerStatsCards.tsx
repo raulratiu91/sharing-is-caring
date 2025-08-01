@@ -19,7 +19,7 @@ export const VolunteerStatsCards: React.FC<VolunteerStatsCardsProps> = ({
       <div className="flex flex-wrap justify-center md:justify-start gap-4">
         <div className="flex items-center gap-2 bg-background px-4 py-2 rounded-full shadow-sm border border-border">
           <div className="usersAvatar flex justify-center">
-            <div className="p-1 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+            <div className="p-1 rounded-full">
               <Users className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
@@ -29,7 +29,7 @@ export const VolunteerStatsCards: React.FC<VolunteerStatsCardsProps> = ({
 
         <div className="flex items-center gap-2 bg-background px-4 py-2 rounded-full shadow-sm border border-border">
           <div className="flex justify-center">
-            <div className="p-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+            <div className="p-1 rounded-full">
               <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
             </div>
           </div>
@@ -38,7 +38,7 @@ export const VolunteerStatsCards: React.FC<VolunteerStatsCardsProps> = ({
 
         <div className="flex items-center gap-2 bg-background px-4 py-2 rounded-full shadow-sm border border-border">
           <div className="flex justify-center">
-            <div className="p-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+            <div className="p-1rounded-full">
               <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
