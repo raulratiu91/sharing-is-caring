@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { Navigation } from "../navigation/Navigation";
+import { useNavigate } from "react-router-dom";
 import {
   Heart,
   Users,
@@ -16,6 +17,8 @@ import {
 } from "lucide-react";
 
 export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
       <Navigation />
@@ -59,6 +62,7 @@ export const HomePage: React.FC = () => {
               </Button>
               <Button
                 size="lg"
+                onClick={() => navigate("/requests")}
                 className="min-w-[200px] bg-gray-200 hover:bg-gray-300 text-black hover:text-black dark:bg-gray-600 dark:text-black dark:hover:bg-gray-500 dark:hover:text-black shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 I Want to Help
@@ -246,6 +250,7 @@ export const HomePage: React.FC = () => {
             <Button
               variant="outline"
               size="lg"
+              onClick={() => navigate("/requests")}
               className="min-w-[200px] border-black text-black hover:bg-gray-200 hover:text-black dark:text-black dark:border-gray-400 dark:hover:bg-gray-600 dark:hover:text-black"
             >
               View All Requests
