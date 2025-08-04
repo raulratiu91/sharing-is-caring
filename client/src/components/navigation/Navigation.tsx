@@ -54,9 +54,9 @@ export const Navigation: React.FC = () => {
             )}
           </Button>
 
-          {/* Mock links to elder's about pages */}
+          {/* Links to real MongoDB elder profiles */}
           <div className="flex items-center gap-2">
-            <Link to="/user/margaret-123/about">
+            <Link to="/user/68905c41d199380fa939c757/about">
               <Button
                 variant="outline"
                 size="sm"
@@ -70,7 +70,8 @@ export const Navigation: React.FC = () => {
                 Margaret
               </Button>
             </Link>
-            <Link to="/user/john-456/about">
+            {/* Add more elder profile links as they become available */}
+            <Link to="/user/68905c41d199380fa939c760/about">
               <Button
                 variant="outline"
                 size="sm"
@@ -84,7 +85,7 @@ export const Navigation: React.FC = () => {
                 John
               </Button>
             </Link>
-            <Link to="/user/sarah-789/about">
+            <Link to="/user/68905c41d199380fa939c767/about">
               <Button
                 variant="outline"
                 size="sm"

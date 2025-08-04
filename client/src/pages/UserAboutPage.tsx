@@ -61,284 +61,66 @@ export function UserAboutPage() {
   }, []);
 
   useEffect(() => {
-    // Mock data for different users
-    const mockElders: Record<string, ElderProfile> = {
-      'margaret-123': {
-        id: 'margaret-123',
-        name: 'Margaret Thompson',
-        age: 78,
-        story:
-          'Margaret has been living in the community for over 50 years. She was a school teacher who dedicated her life to educating children and fostering creativity in young minds.',
-        storyCards: [
-          {
-            id: '1',
-            image:
-              'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=800&h=600&fit=crop',
-            title: 'Teaching Days',
-            description:
-              'Margaret in her classroom, inspiring young minds with literature and creativity.',
-            date: '1985',
-          },
-          {
-            id: '2',
-            image:
-              'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop',
-            title: 'Garden Paradise',
-            description:
-              'Her beautiful garden where she grows vegetables and flowers for the community.',
-            date: '2020',
-          },
-          {
-            id: '3',
-            image:
-              'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=600&fit=crop',
-            title: 'Cooking Together',
-            description:
-              'Margaret teaching her famous apple pie recipe to neighborhood children.',
-            date: '2023',
-          },
-          {
-            id: '4',
-            image:
-              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
-            title: 'Community Stories',
-            description:
-              'Sharing local history stories at the community center.',
-            date: '2024',
-          },
-        ],
-        requests: [
-          {
-            id: '1',
-            title: 'Weekly Grocery Shopping',
-            description:
-              'Need assistance with weekly grocery shopping, especially carrying heavy items',
-            status: 'open',
-            priority: 'high',
-            createdAt: '2024-01-15',
-          },
-          {
-            id: '2',
-            title: 'Technology Help',
-            description:
-              'Help with video calls to family and using smartphone apps',
-            status: 'closed',
-            priority: 'medium',
-            createdAt: '2024-01-10',
-          },
-          {
-            id: '3',
-            title: 'Afternoon Walks',
-            description:
-              'Looking for companionship during afternoon walks around the neighborhood',
-            status: 'open',
-            priority: 'medium',
-            createdAt: '2024-01-20',
-          },
-          {
-            id: '4',
-            title: 'Gardening Assistance',
-            description:
-              'Need help with gardening and plant care, especially during spring season',
-            status: 'open',
-            priority: 'low',
-            createdAt: '2024-01-25',
-          },
-        ],
-        background:
-          'A retired educator with a passion for literature and gardening. Margaret loves sharing stories about the old days and has a wealth of knowledge about local history.',
-        interests: [
-          'Reading',
-          'Gardening',
-          'Cooking',
-          'Local History',
-          'Classical Music',
-        ],
-        location: 'Downtown Community Center Area',
-        avatar:
-          'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop&crop=face',
-      },
-      'john-456': {
-        id: 'john-456',
-        name: 'John Martinez',
-        age: 82,
-        story:
-          'John is a retired mechanic who worked for 45 years fixing cars and helping his neighbors. He has a workshop full of tools and loves teaching young people about craftsmanship.',
-        storyCards: [
-          {
-            id: '1',
-            image:
-              'https://images.unsplash.com/photo-1486754735734-325b5831c3ad?w=800&h=600&fit=crop',
-            title: 'The Workshop',
-            description:
-              "John's workshop where he spent decades fixing cars and teaching skills.",
-            date: '1980',
-          },
-          {
-            id: '2',
-            image:
-              'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=600&fit=crop',
-            title: 'Classic Restoration',
-            description:
-              'Restoring a vintage car with his grandson last summer.',
-            date: '2023',
-          },
-          {
-            id: '3',
-            image:
-              'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop',
-            title: 'Teaching Moments',
-            description: 'Showing neighborhood kids how to use tools safely.',
-            date: '2024',
-          },
-        ],
-        requests: [
-          {
-            id: '5',
-            title: 'Medical Transportation',
-            description:
-              'Need reliable transportation to medical appointments twice a week',
-            status: 'open',
-            priority: 'high',
-            createdAt: '2024-01-12',
-          },
-          {
-            id: '6',
-            title: 'Home Repairs',
-            description:
-              'Help with heavy lifting and minor home repairs around the house',
-            status: 'open',
-            priority: 'medium',
-            createdAt: '2024-01-18',
-          },
-          {
-            id: '7',
-            title: 'Coffee Companion',
-            description:
-              'Looking for someone to share morning coffee and good conversation',
-            status: 'closed',
-            priority: 'low',
-            createdAt: '2024-01-05',
-          },
-          {
-            id: '8',
-            title: 'Workshop Organization',
-            description: 'Assistance with organizing tools and workshop space',
-            status: 'open',
-            priority: 'low',
-            createdAt: '2024-01-22',
-          },
-        ],
-        background:
-          'A skilled craftsman and mentor who believes in the value of hard work and helping others. John has countless stories from his years as a mechanic.',
-        interests: [
-          'Woodworking',
-          'Classic Cars',
-          'Fishing',
-          'Coffee',
-          'Storytelling',
-        ],
-        location: 'Riverside Neighborhood',
-        avatar:
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
-      },
-      'sarah-789': {
-        id: 'sarah-789',
-        name: 'Sarah Chen',
-        age: 73,
-        story:
-          "Sarah immigrated to this country 40 years ago and built a successful small restaurant. She's known for her incredible cooking and warm hospitality.",
-        storyCards: [
-          {
-            id: '1',
-            image:
-              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',
-            title: 'Restaurant Opening',
-            description:
-              "The grand opening of Sarah's restaurant 40 years ago.",
-            date: '1984',
-          },
-          {
-            id: '2',
-            image:
-              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',
-            title: 'Family Recipes',
-            description:
-              'Preparing traditional dishes passed down through generations.',
-            date: '2020',
-          },
-          {
-            id: '3',
-            image:
-              'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
-            title: 'Community Feast',
-            description: 'Hosting a cultural dinner for the neighborhood.',
-            date: '2023',
-          },
-        ],
-        requests: [
-          {
-            id: '9',
-            title: 'Online Ordering Setup',
-            description:
-              'Help with setting up online ordering and delivery system for restaurant',
-            status: 'open',
-            priority: 'high',
-            createdAt: '2024-01-20',
-          },
-          {
-            id: '10',
-            title: 'Cooking Companion',
-            description: 'Someone to cook with and share traditional recipes',
-            status: 'closed',
-            priority: 'medium',
-            createdAt: '2024-01-08',
-          },
-          {
-            id: '11',
-            title: 'Paperwork Help',
-            description:
-              'Assistance with administrative tasks and business paperwork',
-            status: 'open',
-            priority: 'medium',
-            createdAt: '2024-01-15',
-          },
-          {
-            id: '12',
-            title: 'English Practice',
-            description:
-              'Looking for someone to practice English conversation with',
-            status: 'open',
-            priority: 'low',
-            createdAt: '2024-01-25',
-          },
-        ],
-        background:
-          'A talented chef and businesswoman who loves bringing people together through food. Sarah has recipes passed down through generations.',
-        interests: [
-          'Cooking',
-          'Cultural Exchange',
-          'Family History',
-          'Traditional Medicine',
-          'Community Events',
-        ],
-        location: 'Cultural District',
-        avatar:
-          'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face',
-      },
-    };
-
     const fetchElderProfile = async () => {
       try {
         setLoading(true);
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        if (!userId) {
+          setElder(null);
+          return;
+        }
 
-        // Get mock data based on userId
-        const mockData = userId ? mockElders[userId] : null;
+        // Fetch data from MongoDB API
+        const response = await fetch(
+          `http://localhost:3000/api/data/elders/${userId}`
+        );
 
-        setElder(mockData || null);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Transform MongoDB data to match our ElderProfile interface
+          const elderData = result.data;
+
+          const transformedElder: ElderProfile = {
+            id: elderData._id,
+            name: elderData.name,
+            age: elderData.age,
+            story: elderData.story,
+            storyCards: elderData.storyCards || [],
+            requests: elderData.requests.map(
+              (req: {
+                _id: string;
+                title: string;
+                description: string;
+                status: 'open' | 'closed';
+                priority: 'low' | 'medium' | 'high';
+                createdAt: string;
+              }) => ({
+                id: req._id,
+                title: req.title,
+                description: req.description,
+                status: req.status,
+                priority: req.priority,
+                createdAt: new Date(req.createdAt).toLocaleDateString(),
+              })
+            ),
+            background: elderData.background,
+            interests: elderData.interests,
+            location:
+              elderData.location?.address ||
+              elderData.location ||
+              'Location not specified',
+            avatar: elderData.avatar,
+          };
+
+          setElder(transformedElder);
+        } else {
+          setElder(null);
+        }
       } catch (error) {
         console.error('Failed to fetch elder profile:', error);
         setElder(null);
