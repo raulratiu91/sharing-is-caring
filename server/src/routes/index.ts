@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import Paths from '@src/common/constants/Paths';
 import UserRoutes from './UserRoutes';
+import ApiRoutes from './api';
 
 
 /******************************************************************************
@@ -24,6 +25,9 @@ userRouter.delete(Paths.Users.Delete, UserRoutes.delete);
 
 // Add UserRouter
 apiRouter.use(Paths.Users.Base, userRouter);
+
+// ** Add API Routes for MongoDB data ** //
+apiRouter.use('/data', ApiRoutes);
 
 
 /******************************************************************************
