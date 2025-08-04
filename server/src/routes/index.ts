@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import Paths from '@src/common/constants/Paths';
 import UserRoutes from './UserRoutes';
+import AuthRoutes from './AuthRoutes';
 import ApiRoutes from './api';
 
 
@@ -25,6 +26,21 @@ userRouter.delete(Paths.Users.Delete, UserRoutes.delete);
 
 // Add UserRouter
 apiRouter.use(Paths.Users.Base, userRouter);
+
+// ** Add AuthRouter ** //
+
+// Init auth router
+const authRouter = Router();
+
+// Auth routes
+authRouter.post(Paths.Auth.Register, AuthRoutes.register);
+authRouter.post(Paths.Auth.Login, AuthRoutes.login);
+authRouter.get(Paths.Auth.Me, ...AuthRoutes.getMe);
+authRouter.put(Paths.Auth.Me, ...AuthRoutes.updateMe);
+authRouter.post(Paths.Auth.Logout, ...AuthRoutes.logout);
+
+// Add AuthRouter
+apiRouter.use(Paths.Auth.Base, authRouter);
 
 // ** Add API Routes for MongoDB data ** //
 apiRouter.use('/data', ApiRoutes);

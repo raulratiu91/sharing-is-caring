@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useTheme } from "../../hooks/useTheme";
+import { UserMenu } from "../layout/UserMenu";
 import { Heart, Settings, Sun, Moon, Home } from "lucide-react";
 
 export const Navigation: React.FC = () => {
@@ -57,6 +58,8 @@ export const Navigation: React.FC = () => {
               </Button>
             </Link>
           )}
+
+          <UserMenu />
         </div>
       </div>
     </header>

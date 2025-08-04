@@ -1,10 +1,23 @@
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   address: string;
-  bio: string;
-  userType: "elder" | "volunteer";
+  userType: "elder" | "volunteer" | "admin";
   profilePicture?: string;
+  avatar?: string; // Backend uses 'avatar'
+  isEmailVerified: boolean;
+  isApproved: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLoginAt?: string;
+  location?: {
+    address: string;
+    coordinates?: {
+      type: 'Point';
+      coordinates: [number, number];
+    };
+  };
 }

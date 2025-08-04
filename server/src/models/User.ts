@@ -1,19 +1,19 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
   
-  // Basic Info
+  // Basic Info (required for login feature)
   name: string;
   email: string;
   phone?: string;
-  age?: number;
-  avatar?: string;
+  avatar?: string; // profile picture URL
   
   // User Type
   userType: 'volunteer' | 'elder' | 'admin';
   
-  // Location
+  // Location (required for the app functionality)
   location: {
     address: string;
     coordinates?: {
@@ -22,26 +22,8 @@ export interface IUser extends Document {
     };
   };
   
-  // Volunteer-specific fields
-  volunteerInfo?: {
-    skills: string[];
-    availability: {
-      days: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
-      timeSlots: {
-        start: string;
-        end: string;
-      }[];
-    };
-    maxDistance: number; // in kilometers
-    languages: string[];
-    experience?: string;
-    backgroundCheck: boolean;
-    rating?: number;
-    totalHelpCount?: number;
-  };
-  
   // Authentication
-  passwordHash?: string; // Optional if using OAuth
+  passwordHash: string;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   
@@ -49,14 +31,14 @@ export interface IUser extends Document {
   isActive: boolean;
   isApproved: boolean; // For volunteer approval process
   
-  // Connections
-  helpedElders: Types.ObjectId[]; // References to ElderProfile
-  currentRequests: Types.ObjectId[]; // Active help requests
-  
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
   lastLoginAt?: Date;
+  
+  // Methods
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  updateLastLogin(): Promise<IUser>;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -89,11 +71,6 @@ const UserSchema = new Schema<IUser>({
       },
       message: 'Please enter a valid phone number'
     }
-  },
-  age: {
-    type: Number,
-    min: 16,
-    max: 100
   },
   avatar: {
     type: String,
@@ -143,72 +120,10 @@ const UserSchema = new Schema<IUser>({
     }
   },
 
-  // Volunteer-specific fields
-  volunteerInfo: {
-    skills: [{
-      type: String,
-      maxlength: 50,
-      trim: true
-    }],
-    availability: {
-      days: [{
-        type: String,
-        enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-      }],
-      timeSlots: [{
-        start: { 
-          type: String, 
-          match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-          required: function() { return this.timeSlots && this.timeSlots.length > 0; }
-        },
-        end: { 
-          type: String, 
-          match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-          required: function() { return this.timeSlots && this.timeSlots.length > 0; }
-        }
-      }]
-    },
-    maxDistance: {
-      type: Number,
-      min: 1,
-      max: 100,
-      default: 10
-    },
-    languages: [{
-      type: String,
-      maxlength: 30,
-      trim: true
-    }],
-    experience: {
-      type: String,
-      maxlength: 1000,
-      trim: true
-    },
-    backgroundCheck: {
-      type: Boolean,
-      default: false
-    },
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5,
-      validate: {
-        validator: function(v: number) {
-          return v === Math.round(v * 10) / 10; // Allow one decimal place
-        },
-        message: 'Rating must be between 1-5 with max one decimal place'
-      }
-    },
-    totalHelpCount: {
-      type: Number,
-      default: 0,
-      min: 0
-    }
-  },
-
   // Authentication
   passwordHash: {
     type: String,
+    required: true,
     select: false // Don't include in queries by default
   },
   isEmailVerified: {
@@ -231,16 +146,6 @@ const UserSchema = new Schema<IUser>({
     index: true
   },
 
-  // Connections
-  helpedElders: [{
-    type: Schema.Types.ObjectId,
-    ref: 'ElderProfile'
-  }],
-  currentRequests: [{
-    type: Schema.Types.ObjectId,
-    ref: 'ElderProfile'
-  }],
-
   // Timestamps
   lastLoginAt: {
     type: Date
@@ -260,122 +165,34 @@ const UserSchema = new Schema<IUser>({
 // Indexes for better performance
 UserSchema.index({ 'location.coordinates': '2dsphere' }); // Geospatial queries
 UserSchema.index({ userType: 1, isActive: 1, isApproved: 1 }); // User filtering
-UserSchema.index({ 'volunteerInfo.skills': 1 }); // Skill-based matching
-UserSchema.index({ 'volunteerInfo.maxDistance': 1 }); // Distance filtering
 
 // Virtual fields
 UserSchema.virtual('isVerified').get(function() {
   return this.isEmailVerified && (this.userType !== 'volunteer' || this.isApproved);
 });
 
-UserSchema.virtual('canHelp').get(function() {
-  return this.userType === 'volunteer' && this.isActive && this.isApproved && this.isEmailVerified;
-});
-
 // Methods
+UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.passwordHash);
+};
+
 UserSchema.methods.updateLastLogin = function() {
   this.lastLoginAt = new Date();
   return this.save();
 };
 
-UserSchema.methods.addHelpedElder = function(elderId: Types.ObjectId) {
-  if (!this.helpedElders.includes(elderId)) {
-    this.helpedElders.push(elderId);
-    if (this.volunteerInfo) {
-      this.volunteerInfo.totalHelpCount = (this.volunteerInfo.totalHelpCount || 0) + 1;
-    }
+// Pre-save middleware to hash password
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('passwordHash')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(12);
+    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+    next();
+  } catch (error) {
+    next(error as Error);
   }
-  return this.save();
-};
-
-// Static methods for common queries
-UserSchema.statics.findVolunteersNearby = function(coordinates: [number, number], maxDistance: number) {
-  return this.find({
-    userType: 'volunteer',
-    isActive: true,
-    isApproved: true,
-    'location.coordinates': {
-      $near: {
-        $geometry: {
-          type: 'Point',
-          coordinates: coordinates
-        },
-        $maxDistance: maxDistance * 1000 // Convert km to meters
-      }
-    }
-  });
-};
-
-UserSchema.statics.findBySkills = function(skills: string[]) {
-  return this.find({
-    userType: 'volunteer',
-    isActive: true,
-    isApproved: true,
-    'volunteerInfo.skills': { $in: skills }
-  });
-};
+});
 
 export const User = mongoose.model<IUser>('User', UserSchema);
 export default User;
-
-const DEFAULT_USER_VALS = (): IUser => ({
-  id: -1,
-  name: '',
-  created: new Date(),
-  email: '',
-});
-
-
-/******************************************************************************
-                                  Types
-******************************************************************************/
-
-export interface IUser extends IModel {
-  name: string;
-  email: string;
-}
-
-
-/******************************************************************************
-                                  Setup
-******************************************************************************/
-
-// Initialize the "parseUser" function
-const parseUser = parseObject<IUser>({
-  id: isRelationalKey,
-  name: isString,
-  email: isString,
-  created: transIsDate,
-});
-
-
-/******************************************************************************
-                                 Functions
-******************************************************************************/
-
-/**
- * New user object.
- */
-function __new__(user?: Partial<IUser>): IUser {
-  const retVal = { ...DEFAULT_USER_VALS(), ...user };
-  return parseUser(retVal, errors => {
-    throw new Error('Setup new user failed ' + JSON.stringify(errors, null, 2));
-  });
-}
-
-/**
- * Check is a user object. For the route validation.
- */
-function test(arg: unknown, errCb?: TParseOnError): arg is IUser {
-  return !!parseUser(arg, errCb);
-}
-
-
-/******************************************************************************
-                                Export default
-******************************************************************************/
-
-export default {
-  new: __new__,
-  test,
-} as const;
