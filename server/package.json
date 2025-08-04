@@ -15,6 +15,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@types/mongoose": "^5.11.97",
     "cookie-parser": "^1.4.7",
     "dayjs": "^1.11.13",
     "dotenv": "^17.2.1",
@@ -27,6 +28,8 @@
     "jet-validators": "^1.4.3",
     "jsonfile": "^6.1.0",
     "module-alias": "^2.2.3",
+    "mongodb": "^6.18.0",
+    "mongoose": "^8.17.0",
     "morgan": "^1.10.1"
   },
   "devDependencies": {
