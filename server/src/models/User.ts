@@ -2,17 +2,17 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
-  
+
   // Basic Info
   name: string;
   email: string;
   phone?: string;
   age?: number;
   avatar?: string;
-  
+
   // User Type
   userType: 'volunteer' | 'elder' | 'admin';
-  
+
   // Location
   location: {
     address: string;
@@ -21,12 +21,20 @@ export interface IUser extends Document {
       coordinates: [number, number]; // [longitude, latitude]
     };
   };
-  
+
   // Volunteer-specific fields
   volunteerInfo?: {
     skills: string[];
     availability: {
-      days: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
+      days: (
+        | 'monday'
+        | 'tuesday'
+        | 'wednesday'
+        | 'thursday'
+        | 'friday'
+        | 'saturday'
+        | 'sunday'
+      )[];
       timeSlots: {
         start: string;
         end: string;
@@ -39,223 +47,255 @@ export interface IUser extends Document {
     rating?: number;
     totalHelpCount?: number;
   };
-  
+
   // Authentication
   passwordHash?: string; // Optional if using OAuth
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
-  
+
   // Account Status
   isActive: boolean;
   isApproved: boolean; // For volunteer approval process
-  
+
   // Connections
   helpedElders: Types.ObjectId[]; // References to ElderProfile
   currentRequests: Types.ObjectId[]; // Active help requests
-  
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
   lastLoginAt?: Date;
 }
 
-const UserSchema = new Schema<IUser>({
-  // Basic Info
-  name: {
-    type: String,
-    required: true,
-    maxlength: 100,
-    trim: true,
-    index: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    validate: {
-      validator: function(v: string) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-      },
-      message: 'Please enter a valid email'
-    },
-    index: true
-  },
-  phone: {
-    type: String,
-    validate: {
-      validator: function(v: string) {
-        return !v || /^\+?[\d\s\-\(\)]+$/.test(v);
-      },
-      message: 'Please enter a valid phone number'
-    }
-  },
-  age: {
-    type: Number,
-    min: 16,
-    max: 100
-  },
-  avatar: {
-    type: String,
-    validate: {
-      validator: function(v: string) {
-        return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(v);
-      },
-      message: 'Avatar must be a valid image URL'
-    }
-  },
-
-  // User Type
-  userType: {
-    type: String,
-    enum: ['volunteer', 'elder', 'admin'],
-    required: true,
-    default: 'volunteer',
-    index: true
-  },
-
-  // Location
-  location: {
-    address: {
+const UserSchema = new Schema<IUser>(
+  {
+    // Basic Info
+    name: {
       type: String,
       required: true,
-      maxlength: 200,
+      maxlength: 100,
       trim: true,
-      index: true
+      index: true,
     },
-    coordinates: {
-      type: {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      validate: {
+        validator: function (v: string) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        },
+        message: 'Please enter a valid email',
+      },
+      index: true,
+    },
+    phone: {
+      type: String,
+      validate: {
+        validator: function (v: string) {
+          return !v || /^\+?[\d\s\-\(\)]+$/.test(v);
+        },
+        message: 'Please enter a valid phone number',
+      },
+    },
+    age: {
+      type: Number,
+      min: 16,
+      max: 100,
+    },
+    avatar: {
+      type: String,
+      validate: {
+        validator: function (v: string) {
+          return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(v);
+        },
+        message: 'Avatar must be a valid image URL',
+      },
+    },
+
+    // User Type
+    userType: {
+      type: String,
+      enum: ['volunteer', 'elder', 'admin'],
+      required: true,
+      default: 'volunteer',
+      index: true,
+    },
+
+    // Location
+    location: {
+      address: {
         type: String,
-        enum: ['Point'],
-        default: 'Point'
+        required: true,
+        maxlength: 200,
+        trim: true,
+        index: true,
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
-        validate: {
-          validator: function(v: number[]) {
-            return v.length === 2 && 
-                   v[0] >= -180 && v[0] <= 180 && // longitude
-                   v[1] >= -90 && v[1] <= 90;     // latitude
+        type: {
+          type: String,
+          enum: ['Point'],
+          default: 'Point',
+        },
+        coordinates: {
+          type: [Number], // [longitude, latitude]
+          validate: {
+            validator: function (v: number[]) {
+              return (
+                v.length === 2 &&
+                v[0] >= -180 &&
+                v[0] <= 180 && // longitude
+                v[1] >= -90 &&
+                v[1] <= 90
+              ); // latitude
+            },
+            message:
+              'Coordinates must be [longitude, latitude] within valid ranges',
           },
-          message: 'Coordinates must be [longitude, latitude] within valid ranges'
-        }
-      }
-    }
-  },
+        },
+      },
+    },
 
-  // Volunteer-specific fields
-  volunteerInfo: {
-    skills: [{
-      type: String,
-      maxlength: 50,
-      trim: true
-    }],
-    availability: {
-      days: [{
+    // Volunteer-specific fields
+    volunteerInfo: {
+      skills: [
+        {
+          type: String,
+          maxlength: 50,
+          trim: true,
+        },
+      ],
+      availability: {
+        days: [
+          {
+            type: String,
+            enum: [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday',
+            ],
+          },
+        ],
+        timeSlots: [
+          {
+            start: {
+              type: String,
+              match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
+              required: function () {
+                return this.timeSlots && this.timeSlots.length > 0;
+              },
+            },
+            end: {
+              type: String,
+              match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
+              required: function () {
+                return this.timeSlots && this.timeSlots.length > 0;
+              },
+            },
+          },
+        ],
+      },
+      maxDistance: {
+        type: Number,
+        min: 1,
+        max: 100,
+        default: 10,
+      },
+      languages: [
+        {
+          type: String,
+          maxlength: 30,
+          trim: true,
+        },
+      ],
+      experience: {
         type: String,
-        enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-      }],
-      timeSlots: [{
-        start: { 
-          type: String, 
-          match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-          required: function() { return this.timeSlots && this.timeSlots.length > 0; }
+        maxlength: 1000,
+        trim: true,
+      },
+      backgroundCheck: {
+        type: Boolean,
+        default: false,
+      },
+      rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+        validate: {
+          validator: function (v: number) {
+            return v === Math.round(v * 10) / 10; // Allow one decimal place
+          },
+          message: 'Rating must be between 1-5 with max one decimal place',
         },
-        end: { 
-          type: String, 
-          match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-          required: function() { return this.timeSlots && this.timeSlots.length > 0; }
-        }
-      }]
+      },
+      totalHelpCount: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
     },
-    maxDistance: {
-      type: Number,
-      min: 1,
-      max: 100,
-      default: 10
-    },
-    languages: [{
+
+    // Authentication
+    passwordHash: {
       type: String,
-      maxlength: 30,
-      trim: true
-    }],
-    experience: {
-      type: String,
-      maxlength: 1000,
-      trim: true
+      select: false, // Don't include in queries by default
     },
-    backgroundCheck: {
+    isEmailVerified: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5,
-      validate: {
-        validator: function(v: number) {
-          return v === Math.round(v * 10) / 10; // Allow one decimal place
-        },
-        message: 'Rating must be between 1-5 with max one decimal place'
-      }
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
     },
-    totalHelpCount: {
-      type: Number,
-      default: 0,
-      min: 0
-    }
-  },
 
-  // Authentication
-  passwordHash: {
-    type: String,
-    select: false // Don't include in queries by default
-  },
-  isEmailVerified: {
-    type: Boolean,
-    default: false
-  },
-  isPhoneVerified: {
-    type: Boolean,
-    default: false
-  },
+    // Account Status
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isApproved: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
 
-  // Account Status
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  isApproved: {
-    type: Boolean,
-    default: false,
-    index: true
-  },
+    // Connections
+    helpedElders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'ElderProfile',
+      },
+    ],
+    currentRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'ElderProfile',
+      },
+    ],
 
-  // Connections
-  helpedElders: [{
-    type: Schema.Types.ObjectId,
-    ref: 'ElderProfile'
-  }],
-  currentRequests: [{
-    type: Schema.Types.ObjectId,
-    ref: 'ElderProfile'
-  }],
-
-  // Timestamps
-  lastLoginAt: {
-    type: Date
+    // Timestamps
+    lastLoginAt: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        delete ret.passwordHash; // Never send password hash to client
+        return ret;
+      },
+    },
+    toObject: { virtuals: true },
   }
-}, {
-  timestamps: true,
-  toJSON: { 
-    virtuals: true,
-    transform: function(doc, ret) {
-      delete ret.passwordHash; // Never send password hash to client
-      return ret;
-    }
-  },
-  toObject: { virtuals: true }
-});
+);
 
 // Indexes for better performance
 UserSchema.index({ 'location.coordinates': '2dsphere' }); // Geospatial queries
@@ -264,32 +304,43 @@ UserSchema.index({ 'volunteerInfo.skills': 1 }); // Skill-based matching
 UserSchema.index({ 'volunteerInfo.maxDistance': 1 }); // Distance filtering
 
 // Virtual fields
-UserSchema.virtual('isVerified').get(function() {
-  return this.isEmailVerified && (this.userType !== 'volunteer' || this.isApproved);
+UserSchema.virtual('isVerified').get(function () {
+  return (
+    this.isEmailVerified && (this.userType !== 'volunteer' || this.isApproved)
+  );
 });
 
-UserSchema.virtual('canHelp').get(function() {
-  return this.userType === 'volunteer' && this.isActive && this.isApproved && this.isEmailVerified;
+UserSchema.virtual('canHelp').get(function () {
+  return (
+    this.userType === 'volunteer' &&
+    this.isActive &&
+    this.isApproved &&
+    this.isEmailVerified
+  );
 });
 
 // Methods
-UserSchema.methods.updateLastLogin = function() {
+UserSchema.methods.updateLastLogin = function () {
   this.lastLoginAt = new Date();
   return this.save();
 };
 
-UserSchema.methods.addHelpedElder = function(elderId: Types.ObjectId) {
+UserSchema.methods.addHelpedElder = function (elderId: Types.ObjectId) {
   if (!this.helpedElders.includes(elderId)) {
     this.helpedElders.push(elderId);
     if (this.volunteerInfo) {
-      this.volunteerInfo.totalHelpCount = (this.volunteerInfo.totalHelpCount || 0) + 1;
+      this.volunteerInfo.totalHelpCount =
+        (this.volunteerInfo.totalHelpCount || 0) + 1;
     }
   }
   return this.save();
 };
 
 // Static methods for common queries
-UserSchema.statics.findVolunteersNearby = function(coordinates: [number, number], maxDistance: number) {
+UserSchema.statics.findVolunteersNearby = function (
+  coordinates: [number, number],
+  maxDistance: number
+) {
   return this.find({
     userType: 'volunteer',
     isActive: true,
@@ -298,84 +349,22 @@ UserSchema.statics.findVolunteersNearby = function(coordinates: [number, number]
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: coordinates
+          coordinates: coordinates,
         },
-        $maxDistance: maxDistance * 1000 // Convert km to meters
-      }
-    }
+        $maxDistance: maxDistance * 1000, // Convert km to meters
+      },
+    },
   });
 };
 
-UserSchema.statics.findBySkills = function(skills: string[]) {
+UserSchema.statics.findBySkills = function (skills: string[]) {
   return this.find({
     userType: 'volunteer',
     isActive: true,
     isApproved: true,
-    'volunteerInfo.skills': { $in: skills }
+    'volunteerInfo.skills': { $in: skills },
   });
 };
 
 export const User = mongoose.model<IUser>('User', UserSchema);
 export default User;
-
-const DEFAULT_USER_VALS = (): IUser => ({
-  id: -1,
-  name: '',
-  created: new Date(),
-  email: '',
-});
-
-
-/******************************************************************************
-                                  Types
-******************************************************************************/
-
-export interface IUser extends IModel {
-  name: string;
-  email: string;
-}
-
-
-/******************************************************************************
-                                  Setup
-******************************************************************************/
-
-// Initialize the "parseUser" function
-const parseUser = parseObject<IUser>({
-  id: isRelationalKey,
-  name: isString,
-  email: isString,
-  created: transIsDate,
-});
-
-
-/******************************************************************************
-                                 Functions
-******************************************************************************/
-
-/**
- * New user object.
- */
-function __new__(user?: Partial<IUser>): IUser {
-  const retVal = { ...DEFAULT_USER_VALS(), ...user };
-  return parseUser(retVal, errors => {
-    throw new Error('Setup new user failed ' + JSON.stringify(errors, null, 2));
-  });
-}
-
-/**
- * Check is a user object. For the route validation.
- */
-function test(arg: unknown, errCb?: TParseOnError): arg is IUser {
-  return !!parseUser(arg, errCb);
-}
-
-
-/******************************************************************************
-                                Export default
-******************************************************************************/
-
-export default {
-  new: __new__,
-  test,
-} as const;
