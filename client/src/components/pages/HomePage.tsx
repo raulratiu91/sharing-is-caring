@@ -2,7 +2,9 @@ import React from "react";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { Navigation } from "../navigation/Navigation";
+import { QuickLogin } from "../auth/QuickLogin";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   Heart,
   Users,
@@ -18,6 +20,7 @@ import {
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
@@ -25,6 +28,21 @@ export const HomePage: React.FC = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-6xl">
+        
+        {/* Authentication Demo Section - Only show if not logged in */}
+        {!user && (
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-4">
+                🔐 Test Authentication
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Try logging in to test the JWT authentication system
+              </p>
+            </div>
+            <QuickLogin />
+          </div>
+        )}
         {/* Hero Banner Section */}
         <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50 rounded-2xl p-8 md:p-12 mb-16 overflow-hidden">
           {/* Background decoration */}

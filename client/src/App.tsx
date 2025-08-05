@@ -4,6 +4,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AuthPage } from "./components/auth/AuthPage";
+import { LoginDemo } from "./components/auth/LoginDemo";
 import { HomePage } from "./components/pages/HomePage";
 import { RequestsPage } from "./components/pages/RequestsPage";
 import { ProfileSettings } from "./components/profile/ProfileSettings";
@@ -16,6 +17,7 @@ function App() {
           <div className="App">
             <Routes>
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/login-demo" element={<LoginDemo />} />
               <Route 
                 path="/" 
                 element={

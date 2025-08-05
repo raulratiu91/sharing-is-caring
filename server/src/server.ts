@@ -1,6 +1,7 @@
 import morgan from 'morgan';
 import path from 'path';
 import helmet from 'helmet';
+import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import logger from 'jet-logger';
 
@@ -27,6 +28,23 @@ DatabaseConnection.connect().catch((error) => {
 });
 
 // **** Middleware **** //
+
+// CORS configuration - Allow requests from frontend
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',  // Frontend production
+    'http://localhost:5173',  // Vite dev server
+    'http://localhost:4173',  // Vite preview
+    'http://127.0.0.1:5173',  // Alternative localhost
+    'http://127.0.0.1:3000',  // Alternative localhost
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 // Basic middleware
 app.use(express.json());
