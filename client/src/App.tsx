@@ -1,6 +1,9 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AuthPage } from "./components/auth/AuthPage";
 import { HomePage } from "./components/pages/HomePage";
 import { RequestsPage } from "./components/pages/RequestsPage";
 import { ProfileSettings } from "./components/profile/ProfileSettings";
@@ -8,15 +11,39 @@ import { ProfileSettings } from "./components/profile/ProfileSettings";
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <div className="App">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/requests" element={<RequestsPage />} />
-            <Route path="/profile" element={<ProfileSettings />} />
-          </Routes>
-        </div>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <div className="App">
+            <Routes>
+              <Route path="/auth" element={<AuthPage />} />
+              <Route 
+                path="/" 
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/requests" 
+                element={
+                  <ProtectedRoute>
+                    <RequestsPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <ProfileSettings />
+                  </ProtectedRoute>
+                } 
+              />
+            </Routes>
+          </div>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
