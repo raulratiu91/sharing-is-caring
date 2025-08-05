@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../types/user';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { type User } from '../types/user';
 
 interface AuthContextType {
   user: User | null;
@@ -69,10 +69,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // API helper function
   const apiCall = async (endpoint: string, options: RequestInit = {}) => {
     const url = `${API_BASE_URL}${endpoint}`;
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
     };
+
+    // Add any additional headers from options
+    if (options.headers) {
+      Object.assign(headers, options.headers);
+    }
 
     if (token) {
       headers.Authorization = `Bearer ${token}`;

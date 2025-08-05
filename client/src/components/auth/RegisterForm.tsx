@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card } from '../ui/card';
-import { Select } from '../ui/select';
+// import { Select } from '../ui/select'; // Not used
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;

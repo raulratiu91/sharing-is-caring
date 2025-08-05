@@ -155,8 +155,8 @@ const UserSchema = new Schema<IUser>({
   toJSON: { 
     virtuals: true,
     transform: function(doc, ret) {
-      delete ret.passwordHash; // Never send password hash to client
-      return ret;
+      const { passwordHash, ...userWithoutPassword } = ret;
+      return userWithoutPassword;
     }
   },
   toObject: { virtuals: true }
@@ -194,5 +194,16 @@ UserSchema.pre('save', async function(next) {
   }
 });
 
-export const User = mongoose.model<IUser>('User', UserSchema);
+// Create the model with extended static methods
+interface IUserModel extends mongoose.Model<IUser> {
+  test(obj: any): obj is IUser;
+}
+
+export const User = mongoose.model<IUser, IUserModel>('User', UserSchema);
+
+// Add the legacy validation function for route compatibility
+User.test = function(obj: any): obj is IUser {
+  return obj && typeof obj.name === 'string' && typeof obj.email === 'string';
+};
+
 export default User;

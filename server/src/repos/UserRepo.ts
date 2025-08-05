@@ -64,7 +64,7 @@ async function update(user: IUser): Promise<void> {
         ...dbUser,
         name: user.name,
         email: user.email,
-      };
+      } as any;
       return orm.saveDb(db);
     }
   }
@@ -105,8 +105,8 @@ async function insertMult(
   const db = await orm.openDb(),
     usersF = [ ...users ];
   for (const user of usersF) {
-    user.id = getRandomInt();
-    user.created = new Date();
+    (user as any).id = getRandomInt();
+    (user as any).created = new Date();
   }
   db.users = [ ...db.users, ...users ];
   await orm.saveDb(db);

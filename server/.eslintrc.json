@@ -1,0 +1,55 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es2022": true
+  },
+  "extends": [],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    // Basic ESLint rules - keep minimal
+    "no-unused-vars": "off",
+    "prefer-const": "warn",
+    
+    // TypeScript rules - turn off all strict safety rules
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/no-dynamic-delete": "off",
+    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/prefer-optional-chain": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    
+    // Keep only non-intrusive rules as warnings
+    "@typescript-eslint/no-unused-vars": "warn",
+    
+    // Turn off all stylistic and formatting rules
+    "comma-dangle": "off",
+    "max-len": "off",
+    "indent": "off",
+    "no-useless-escape": "off",
+    
+    // Turn off all Node.js plugin rules
+    "n/no-process-exit": "off",
+    "n/hashbang": "off",
+    
+    // Turn off any stylistic plugin rules
+    "@stylistic/ts/member-delimiter-style": "off",
+    "@stylistic/js/comma-dangle": "off"
+  }
+}

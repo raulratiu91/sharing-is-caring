@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '../ui/button';
+// import { Button } from '../ui/button'; // Not used
 
 export const UserMenu: React.FC = () => {
   const { user, logout } = useAuth();

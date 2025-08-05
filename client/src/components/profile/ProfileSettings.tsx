@@ -21,6 +21,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   // Default user data for demo purposes
   const [profileData, setProfileData] = useState<User>(
     user || {
+      _id: "1",
       id: "1",
       name: "Maria Santos",
       email: "maria.santos@example.com",
@@ -28,6 +29,11 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       address: "123 Main Street, Anytown, State 12345",
       bio: "I love helping my community and staying connected with technology.",
       userType: "elder",
+      isEmailVerified: false,
+      isApproved: true,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }
   );
 

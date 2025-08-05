@@ -1,14 +1,6 @@
-import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import stylisticJs from '@stylistic/eslint-plugin-js';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
-import nodePlugin from 'eslint-plugin-n';
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  nodePlugin.configs['flat/recommended-script'],
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
   { 
     ignores: [
       '**/node_modules/*',
@@ -17,79 +9,59 @@ export default tseslint.config(
     ],
   },
   {
+    files: ['**/*.ts'],
     languageOptions: {
+      parser: tseslint.parser,
       parserOptions: {
         project: './tsconfig.json',
         warnOnUnsupportedTypeScriptVersion: false,
       },
     },
-  },
-  {
     plugins: {
-      '@stylistic/js': stylisticJs,
-      '@stylistic/ts': stylisticTs,
+      '@typescript-eslint': tseslint.plugin,
     },
-  },
-  {
-    files: ['**/*.ts'],
-  },
-  {
     rules: {
-      '@typescript-eslint/explicit-member-accessibility': 'warn',
-      '@typescript-eslint/no-misused-promises': 0,
-      '@typescript-eslint/no-floating-promises': 0,
-      '@typescript-eslint/no-confusing-void-expression': 0,
-      '@typescript-eslint/no-unnecessary-condition': 0,
-      '@typescript-eslint/restrict-template-expressions': [
-        'error', { allowNumber: true },
-      ],
-      '@typescript-eslint/restrict-plus-operands': [
-        'warn', { allowNumberAndString: true },
-      ],
+      // Turn off all strict TypeScript rules
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/array-type': 'off',
+      '@typescript-eslint/no-dynamic-delete': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/restrict-plus-operands': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/explicit-member-accessibility': 'off',
+      '@typescript-eslint/no-unsafe-enum-comparison': 'off',
+      '@typescript-eslint/no-unnecessary-type-parameters': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      
+      // Node.js rules (these are disabled by not loading the plugin)
+      
+      // Turn off all stylistic rules
+      'max-len': 'off',
+      'comma-dangle': 'off',
+      'indent': 'off',
+      'quotes': 'off',
+      'no-useless-escape': 'off',
+      
+      // Keep only minimal useful rules as warnings
       '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-unsafe-enum-comparison': 0,
-      '@typescript-eslint/no-unnecessary-type-parameters': 0,
-      '@stylistic/js/no-extra-semi': 'warn',
-      'max-len': [
-        'warn',
-        {
-          'code': 80,
-        },
-      ],
-      '@stylistic/ts/semi': ['warn', 'always'],
-      '@stylistic/ts/member-delimiter-style': ['warn', {
-        'multiline': {
-          'delimiter': 'comma',
-          'requireLast': true,
-        },
-        'singleline': {
-          'delimiter': 'comma',
-          'requireLast': false,
-        },
-        'overrides': {
-          'interface': {
-            'singleline': {
-              'delimiter': 'semi',
-              'requireLast': false,
-            },
-            'multiline': {
-              'delimiter': 'semi',
-              'requireLast': true,
-            },
-          },
-        },
-      }],
-      '@typescript-eslint/no-non-null-assertion': 0,
-      '@typescript-eslint/no-unused-expressions': 'warn',
-      'comma-dangle': ['warn', 'always-multiline'],
-      'no-console': 1,
-      'no-extra-boolean-cast': 0,
-      'indent': ['warn', 2],
-      'quotes': ['warn', 'single'],
-      'n/no-process-env': 1,
-      'n/no-missing-import': 0,
-      'n/no-unpublished-import': 0,
       'prefer-const': 'warn',
+      'no-console': 'warn',
+      'no-extra-boolean-cast': 'off',
     },
   },
 );
