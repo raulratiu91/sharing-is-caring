@@ -99,25 +99,9 @@ const UserSchema = new Schema<IUser>({
       maxlength: 200,
       trim: true,
       index: true
-    },
-    coordinates: {
-      type: {
-        type: String,
-        enum: ['Point'],
-        default: 'Point'
-      },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        validate: {
-          validator: function(v: number[]) {
-            return v.length === 2 && 
-                   v[0] >= -180 && v[0] <= 180 && // longitude
-                   v[1] >= -90 && v[1] <= 90;     // latitude
-          },
-          message: 'Coordinates must be [longitude, latitude] within valid ranges'
-        }
-      }
     }
+    // Note: Coordinates removed temporarily to fix registration
+    // Will add back geolocation support later
   },
 
   // Authentication

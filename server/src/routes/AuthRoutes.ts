@@ -45,11 +45,13 @@ async function register(req: Request, res: Response): Promise<void> {
       token: result.token
     });
   } catch (error: any) {
+    console.error('Registration error:', error);
     if (error.status) {
       res.status(error.status).json({ error: error.message });
     } else {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: 'Registration failed'
+        error: 'Registration failed',
+        details: error.message || 'Unknown error'
       });
     }
   }
